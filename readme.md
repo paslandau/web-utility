@@ -19,14 +19,10 @@ The recommended way to install web-utility is through [Composer](http://getcompo
 Next, update your project's composer.json file to include WebUtility:
 
     {
-        "repositories": [
-            {
-                "type": "git",
-                "url": "https://github.com/paslandau/web-utility.git"
-            }
-        ],
+        "repositories": [ { "type": "composer", "url": "http://packages.myseosolution.de/"} ],
+        "minimum-stability": "dev",
         "require": {
-             "paslandau/web-utility": "~0"
+             "paslandau/web-utility": "dev-master"
         }
     }
 
