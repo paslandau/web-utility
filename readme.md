@@ -1,7 +1,7 @@
 #web-utility
 [![Build Status](https://travis-ci.org/paslandau/web-utility.svg?branch=master)](https://travis-ci.org/paslandau/web-utility)
 
-Library to extend PHP core functions by common web related functions 
+Library to extend PHP core functions by common web related functions
 
 ##Description
 [todo]
