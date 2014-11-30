@@ -1,5 +1,5 @@
-#WebUtility
-[![Build Status](https://travis-ci.org/paslandau/WebUtility.svg?branch=master)](https://travis-ci.org/paslandau/WebUtility)
+#web-utility
+[![Build Status](https://travis-ci.org/paslandau/web-utility.svg?branch=master)](https://travis-ci.org/paslandau/web-utility)
 
 Library to extend PHP core functions by common web related functions
 
@@ -12,7 +12,7 @@ Library to extend PHP core functions by common web related functions
 
 ##Installation
 
-The recommended way to install WebUtility is through [Composer](http://getcomposer.org/).
+The recommended way to install web-utility is through [Composer](http://getcomposer.org/).
 
     curl -sS https://getcomposer.org/installer | php
 
@@ -22,11 +22,11 @@ Next, update your project's composer.json file to include WebUtility:
         "repositories": [
             {
                 "type": "git",
-                "url": "https://github.com/paslandau/WebUtility.git"
+                "url": "https://github.com/paslandau/web-utility.git"
             }
         ],
         "require": {
-             "paslandau/WebUtility": "~0"
+             "paslandau/web-utility": "~0"
         }
     }
 

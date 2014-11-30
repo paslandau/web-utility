@@ -1,5 +1,5 @@
 {
-    "name": "paslandau/WebUtility",
+    "name": "paslandau/web-utility",
     "description": "Library to extend PHP core functions by common web related functions",
     "authors": [
         {
@@ -17,7 +17,7 @@
     "repositories": [
         {
             "type": "git",
-            "url": "https://github.com/paslandau/ArrayUtility.git"
+            "url": "https://github.com/paslandau/array-utility.git"
         }
     ],
     "require": {
@@ -29,6 +29,6 @@
     },
     "require-dev": {
         "phpunit/phpunit": "~3",
-        "paslandau/ArrayUtility": "~0"
+        "paslandau/array-utility": "~0"
     }
 }
