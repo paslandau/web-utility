@@ -29,6 +29,6 @@
     },
     "require-dev": {
         "phpunit/phpunit": "~3",
-        "paslandau/array-utility": "~0"
+        "paslandau/array-utility": "dev-master"
     }
 }
