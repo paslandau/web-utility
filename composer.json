@@ -1,6 +1,6 @@
 {
     "name": "paslandau/web-utility",
-    "description": "Library to extend PHP core functions by common web related functions",
+    "description": "Library to extend PHP core functions by common web related functions.",
     "authors": [
         {
             "name": "Pascal Landau",
