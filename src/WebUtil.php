@@ -93,10 +93,37 @@ class WebUtil
     {
         $url = Url::fromString($url);
         $q = $url->getQuery();
-        $q->__toString();
         $q->merge($query);
         $url->setQuery($q);
         return $url->__toString();
+    }
+
+    /**
+     * ToDo: Add Test!
+     * Removes everything after "?" (removes "?" as well)
+     * @param string $url
+     * @return string
+     */
+    public static function removeQuery($url){
+        $idx = mb_strpos($url,"?");
+        if($idx === false){
+            return $url;
+        }
+        $newUrl = mb_substr($url,0,$idx);
+        return $newUrl;
+    }
+
+    /**
+     * ToDo: Add Test!
+     * Gets the URL query as associative array.
+     * @param string $url
+     * @return string[]
+     */
+    public static function getQuery($url){
+        $urlObj = Url::fromString($url);
+        $query = $urlObj->getQuery();
+        $params = $query->toArray();
+        return $params;
     }
 
     /**
@@ -160,9 +187,9 @@ class WebUtil
      * =>
      * array(
      * "www",
-     * "example",
+     *  "test",
      * "bla",
-     * "test",
+     * "example",
      * );
      * @param string $url
      * @return string[]

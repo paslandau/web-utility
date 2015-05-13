@@ -19,12 +19,12 @@
     "require": {
         "php": "~5.5",
         "ext-mbstring": "*",
-        "guzzlehttp/guzzle": "~5.0.3",
+        "guzzlehttp/guzzle": "^5.2.0",
         "jeremykendall/php-domain-parser": "~1.3",
         "glenscott/url-normalizer": "~1.1"
     },
     "require-dev": {
-        "phpunit/phpunit": "~3",
+        "phpunit/phpunit": "~4",
         "paslandau/array-utility": "dev-master"
     }
 }

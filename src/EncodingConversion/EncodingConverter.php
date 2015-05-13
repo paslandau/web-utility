@@ -27,8 +27,8 @@ class EncodingConverter implements EncodingConverterInterface{
 
     /**
      * @param $toEncoding
-     * @param bool|null $replaceHeaders
-     * @param bool|null $replaceContent
+     * @param bool|null $replaceHeaders [optional]. Default: true.
+     * @param bool|null $replaceContent [optional]. Default: false.
      * @param null|string $fixedInputEncoding [optional]. Default: null.
      */
     function __construct($toEncoding, $replaceHeaders = null, $replaceContent = null, $fixedInputEncoding = null)
