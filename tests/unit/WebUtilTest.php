@@ -178,6 +178,166 @@ class WebUtilTest extends PHPUnit_Framework_TestCase {
         }
     }
 
+    public function test_removeQuery(){
+
+        $tests = [
+            "no-query" =>
+                [
+                    "base" => "http://www.example.com/foo",
+                    "expected" => "http://www.example.com/foo"
+                ],
+            "no-query-question-mark" =>
+                [
+                    "base" => "http://www.example.com/foo?",
+                    "expected" => "http://www.example.com/foo"
+                ],
+            "no-query-ampersand" =>
+                [
+                    "base" => "http://www.example.com/foo?bar&",
+                    "expected" => "http://www.example.com/foo"
+                ],
+            "query-key" =>
+                [
+                    "base" => "http://www.example.com/foo?foo",
+                    "expected" => "http://www.example.com/foo"
+                ],
+            "query-key-value" =>
+                [
+                    "base" => "http://www.example.com/foo?foo=bar",
+                    "expected" => "http://www.example.com/foo"
+                ],
+            "query-ampersand-key-value" =>
+                [
+                    "base" => "http://www.example.com/foo?bar&foo=bar",
+                    "expected" => "http://www.example.com/foo"
+                ],
+            "query-ampersand-key-value-keep-hash" =>
+                [
+                    "base" => "http://www.example.com/foo?bar&foo=bar#baz",
+                    "hash" => true,
+                    "expected" => "http://www.example.com/foo#baz"
+                ],
+            "query-ampersand-key-value-remove-hash" =>
+                [
+                    "base" => "http://www.example.com/foo?bar&foo=bar#baz",
+                    "hash" => false,
+                    "expected" => "http://www.example.com/foo"
+                ],
+        ];
+
+        foreach($tests as $name => $data){
+            if(array_key_exists("hash",$data)){
+                $res = WebUtil::removeQuery($data["base"],$data["hash"]);
+            }else {
+                $res = WebUtil::removeQuery($data["base"]);
+            }
+            $this->assertEquals($data["expected"],$res,"Error in test $name");
+        }
+    }
+
+    public function test_getQuery(){
+
+        // only test unnamed key array parameters in query due to https://github.com/glenscott/url-normalizer/issues/17
+        $tests = [
+            "no-value" =>
+                [
+                    "base" => "http://example.com/?foo[]",
+                    "expected" => ["foo" => [null]]
+
+                ],
+            "value" =>
+                [
+                    "base" => "http://example.com/?foo[]=bar",
+                    "expected" => ["foo" => ["bar"]]
+
+                ],
+            "2-no-value" =>
+                [
+                    "base" => "http://example.com/?foo[]&foo[]",
+                    "expected" => ["foo" => [null,null]]
+                ],
+            "2-value" =>
+                [
+                    "base" => "http://example.com/?foo[]=bar&foo[]=baz",
+                    "expected" => ["foo" => ["bar","baz"]]
+                ],
+            "value-no-value" =>
+                [
+                    "base" => "http://example.com/?foo[]=bar&foo[]",
+                    "expected" => ["foo" => ["bar",null]]
+                ],
+            "whitespace-key" =>
+                [
+                    "base" => "http://example.com/?f oo[]=bar&f oo[]",
+                    "expected" => ["f oo" => ["bar",null]]
+                ],
+            "dot-key" =>
+                [
+                    "base" => "http://example.com/?f.oo[]=bar&f.oo[]",
+                    "expected" => ["f.oo" => ["bar",null]]
+                ],
+            "dot-key-whitespace-key" =>
+                [
+                    "base" => "http://example.com/?f.oo[]=bar&f oo[]",
+                    "expected" => ["f.oo" => ["bar"],"f oo" => [null]]
+                ],
+            "dot-name-key-whitespace-name-key" =>
+                [
+                    "base" => "http://example.com/?f.oo[foo]=bar&f oo[2]",
+                    "expected" => ["f.oo" => ["foo" => "bar"],"f oo" => ["2" => null]]
+                ],
+            "nested-arrays" =>
+                [
+                    "base" => "http://example.com/?f.oo[foo.1][foo.2][foo.3]=foo-val&f.oo[foo.1][foo.2][foo.4]=foo-val2",
+                    "expected" => ["f.oo" => ["foo.1" => ["foo.2" => ["foo.3" => "foo-val", "foo.4" => "foo-val2"]]]]
+                ],
+            //todo is this expected behavior? Treating foo as array although no [] syntax is used?
+            "overriding-values" =>
+                [
+                    "base" => "http://example.com/?foo=bar&foo=baz",
+                    "expected" => ["foo" => ["bar","baz"]]
+                ],
+            // Having and empty key with a null value on trailing ampersand is expected behaviour:
+            // [...] the URI "http://example.com/?" cannot be assumed to be equivalent to "http://example.com/" [...]
+            // @see https://tools.ietf.org/html/rfc3986#section-6.2.3
+            "trailing-ampersand" =>
+                [
+                    "base" => "http://example.com/?foo=baz&",
+                    "expected" => ["foo" => "baz","" => null]
+                ],
+            "trailing-question-mark" =>
+                [
+                    "base" => "http://example.com/?",
+                    "expected" => []
+                ],
+            //todo is this expected behavior? Treating foo as array although no [] syntax is used?
+            "nested-arrays-override" =>
+                [
+                    "base" => "http://example.com/?f.oo[foo.1][foo.2][foo.3]=foo-val&f.oo[foo.1][foo.2][foo.3]=foo-val2",
+                    "expected" => ["f.oo" => ["foo.1" => ["foo.2" => ["foo.3" => ["foo-val","foo-val2"]]]]]
+                ],
+            "crazy-stuff" =>
+                [
+                    "base" => "http://example.com/?f.o  o[foo]=bar&f oo[2]&",
+                    "expected" => ["f.o  o" => ["foo" => "bar"], "f oo" => [2=>null],"" => null]
+                ],
+        ];
+
+        foreach($tests as $name => $data){
+            $res = WebUtil::getQuery($data["base"]);
+//            echo "\"expected\" => \"$res\"\n";
+            $msg = [
+                "Error in test $name:",
+                "Input    : ".$data["base"],
+                "Excpected: ".json_encode($data["expected"]),
+                "Actual   : ".json_encode($res),
+            ];
+            $msg = implode("\n",$msg);
+//            echo $msg."\n";
+            $this->assertEquals($data["expected"],$res,$msg);
+        }
+    }
+
     public function test_getPathSegments(){
 
         $tests = [
@@ -443,7 +603,6 @@ class WebUtilTest extends PHPUnit_Framework_TestCase {
 
     public function test_normalizeUrl(){
 
-        // only test unnamed key array parameters in query due to https://github.com/glenscott/url-normalizer/issues/17
         $tests = [
             "no-value" =>
                 [
@@ -497,46 +656,93 @@ class WebUtilTest extends PHPUnit_Framework_TestCase {
                     "base" => "http://example.com/?f.oo[foo.1][foo.2][foo.3]=foo-val&f.oo[foo.1][foo.2][foo.4]=foo-val2",
                     "expected" => "http://example.com/?f.oo%5Bfoo.1%5D%5Bfoo.2%5D%5Bfoo.3%5D=foo-val&f.oo%5Bfoo.1%5D%5Bfoo.2%5D%5Bfoo.4%5D=foo-val2"
                 ],
-            // the below tests are currently failing -- see https://github.com/glenscott/url-normalizer/issues/17#issuecomment-64932046
-//            "ordering-key" =>
+            "ordering-key-true" =>
+                [
+                    "base" => "http://example.com/?b_foo=a&a_foo=a",
+                    "orderParams" => true,
+                    "expected" => "http://example.com/?a_foo=a&b_foo=a"
+                ],
+            "ordering-values-true" =>
+                [
+                    "base" => "http://example.com/?foo=b&foo=a",
+                    "orderParams" => true,
+                    "expected" => "http://example.com/?foo=b&foo=a"
+                ],
+            "ordering-key-false" =>
+                [
+                    "base" => "http://example.com/?b_foo=a&a_foo=a",
+                    "orderParams" => false,
+                    "expected" => "http://example.com/?b_foo=a&a_foo=a"
+                ],
+            "ordering-values-false" =>
+                [
+                    "base" => "http://example.com/?foo=b&foo=a",
+                    "orderParams" => false,
+                    "expected" => "http://example.com/?foo=b&foo=a"
+                ],
+            "multiple-ampersand-remove" =>
+                [
+                    "base" => "http://example.com/?foo=baz&&&bar=baz",
+                    "removeTrailing" => true,
+                    "expected" => "http://example.com/?foo=baz&bar=baz"
+                ],
+            "trailing-ampersand-remove" =>
+                [
+                    "base" => "http://example.com/?foo=baz&",
+                    "removeTrailing" => true,
+                    "expected" => "http://example.com/?foo=baz"
+                ],
+            "trailing-question-mark-remove" =>
+                [
+                    "base" => "http://example.com/?",
+                    "removeTrailing" => true,
+                    "expected" => "http://example.com/"
+                ],
+            "trailing-question-mark" =>
+                [
+                    "base" => "http://example.com/?",
+                    "removeTrailing" => false,
+                    "expected" => "http://example.com/?"
+                ],
+            "nested-arrays-order" =>
+                [
+                    "base" => "http://example.com/?f.oo[foo.1][foo.2][foo.4]=foo-val2&f.oo[foo.1][foo.2][foo.3]=foo-val",
+                    "orderParams" => true,
+                    "expected" => "http://example.com/?f.oo%5Bfoo.1%5D%5Bfoo.2%5D%5Bfoo.3%5D=foo-val&f.oo%5Bfoo.1%5D%5Bfoo.2%5D%5Bfoo.4%5D=foo-val2"
+                ],
+            //This test fails --- the trailing ampersand should not be removed
+            // @see https://github.com/glenscott/url-normalizer/issues/17#issuecomment-103825087
+//            "trailing-ampersand" =>
 //                [
-//                    "base" => "http://example.com/?b_foo=a&a_foo=a",
-//                    "expected" => "http://example.com/?a_foo=a&b_foo=a"
+//                    "base" => "http://example.com/?foo=baz&",
+//                    "removeTrailing" => false,
+//                    "expected" => "http://example.com/?foo=baz&"
 //                ],
-//            "ordering-values" =>
+            //This test fails --- the trailing ampersand should not be removed
+//            "multiple-ampersand" =>
 //                [
-//                    "base" => "http://example.com/?foo=b&foo=a",
-//                    "expected" => "http://example.com/?foo=b&foo=a"
+//                    "base" => "http://example.com/?foo=baz&&&bar=baz",
+//                    "removeTrailing" => false,
+//                    "expected" => "http://example.com/?foo=baz&&&bar=baz"
 //                ],
+            // fails due to trailing ampersand being removed
+//            "crazy-stuff" =>
+//                [
+//                    "base" => "http://example.com/?f.o  o[foo]=bar&f oo[2]&",
+//                    "expected" => "http://example.com/?f.o%20%20o%5Bfoo%5D=bar&f%20oo%5B2%5D&"
+//                ],
+            //we cannot assume that values are overriden!
 //            "overriding-values" =>
 //                [
 //                    "base" => "http://example.com/?foo=bar&foo=baz",
 //                    "expected" => "http://example.com/?foo=baz"
 //                ],
-//            "trailing-ampersand" =>
-//                [
-//                    "base" => "http://example.com/?foo=baz&",
-//                    "expected" => "http://example.com/?foo=baz"
-//                ],
-//            "trailing-question-mark" =>
-//                [
-//                    "base" => "http://example.com/?",
-//                    "expected" => "http://example.com/"
-//                ],
-//            "nested-arrays-override" =>
-//                [
-//                    "base" => "http://example.com/?f.oo[foo.1][foo.2][foo.3]=foo-val&f.oo[foo.1][foo.2][foo.3]=foo-val2",
-//                    "expected" => "http://example.com/?f.oo%5Bfoo.1%5D%5Bfoo.2%5D%5Bfoo.3%5D=foo-val2"
-//                ],
-//            "crazy-stuff" =>
-//                [
-//                    "base" => "http://example.com/?f.o  o[foo]=bar&f oo[2]&",
-//                    "expected" => "http://example.com/?f.o%20%20o%5Bfoo%5D=bar&f%20oo%5B2%5D"
-//                ],
         ];
 
         foreach($tests as $name => $data){
-            $res = WebUtil::normalizeUrl($data["base"]);
+            $removeTrailing = array_key_exists("removeTrailing",$data) ? $data["removeTrailing"] : null;
+            $orderParams = array_key_exists("orderParams",$data) ? $data["orderParams"] : null;
+            $res = WebUtil::normalizeUrl($data["base"],$removeTrailing,$orderParams);
 //            echo "\"expected\" => \"$res\"\n";
             $msg = [
                 "Error in test $name:",

@@ -99,22 +99,35 @@ class WebUtil
     }
 
     /**
-     * ToDo: Add Test!
-     * Removes everything after "?" (removes "?" as well)
+     * Removes everything after (including) "?" (removes "?" as well)
+     *
      * @param string $url
+     * @param bool $keepHash [optional]. Default: true.
      * @return string
      */
-    public static function removeQuery($url){
+    public static function removeQuery($url, $keepHash = null){
         $idx = mb_strpos($url,"?");
         if($idx === false){
             return $url;
         }
+
+        $hash = "";
+        if($keepHash === null){
+            $keepHash = true;
+        }
+        if($keepHash){
+            $hashIdx = mb_strrpos($url,"#");
+            if($hashIdx !== false){
+                $hash = mb_substr($url,$hashIdx);
+            }
+        }
+
         $newUrl = mb_substr($url,0,$idx);
+        $newUrl .= $hash;
         return $newUrl;
     }
 
     /**
-     * ToDo: Add Test!
      * Gets the URL query as associative array.
      * @param string $url
      * @return string[]
@@ -134,7 +147,8 @@ class WebUtil
      * array(
      * "root",
      * "folder2",
-     * "folder3"
+     * "folder3",
+     * "asd.php"
      * );
      * @param $url
      * @return string[]
@@ -464,11 +478,19 @@ class WebUtil
      * @see https://github.com/glenscott/url-normalizer
      * @see http://www.apps.ietf.org/rfc/rfc3986.html
      * @param string $url
+     * @param bool $removeTrailingDelimiter [optional]. Default: false. If true, http://example.com/? becomes http://example.com/ instead of staying http://example.com/? (same holds true for trailing &)
+     * @param bool $sortQueryParams [optional]. Default: false. If true, http://example.com/?b=foo&a=foo becomes http://example.com/?a=foo&b=foo instead of staying http://example.com/?b=foo&a=foo
      * @return string
      */
-    public static function normalizeUrl($url)
+    public static function normalizeUrl($url,$removeTrailingDelimiter = null, $sortQueryParams = null)
     {
-        $normalizer = new Normalizer($url);
+        if($removeTrailingDelimiter === null){
+            $removeTrailingDelimiter = false;
+        }
+        if($sortQueryParams === null){
+            $sortQueryParams = false;
+        }
+        $normalizer = new Normalizer($url,$removeTrailingDelimiter,$sortQueryParams);
         $url = $normalizer->normalize();
         return $url;
     }
