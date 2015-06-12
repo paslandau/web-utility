@@ -2,6 +2,8 @@
 
 #dev-master
 
+##0.2.0
+
  - added methods to make URL query handling easier: `WebUtil::removeQuery()` and `WebUtil::getQuery()`
  - updated to newest version of [glenscott/url-normalizer](https://github.com/glenscott/url-normalizer/) once dev-master gets tagged due to [issue #17: SplFileObject Flags have no effect / empty lines cannot be ignored](https://github.com/glenscott/url-normalizer/issues/17)
  - updated to Guzzle ~5.3
