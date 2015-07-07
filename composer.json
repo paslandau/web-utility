@@ -19,7 +19,7 @@
     "require": {
         "php": "~5.5",
         "ext-mbstring": "*",
-        "guzzlehttp/guzzle": "~5.3",
+        "guzzlehttp/guzzle": "^5.3.0",
         "jeremykendall/php-domain-parser": "~1.3",
         "glenscott/url-normalizer": "~1.4"
     },
