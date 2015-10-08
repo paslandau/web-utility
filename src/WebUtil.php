@@ -542,7 +542,7 @@ class WebUtil
         $parts = explode(".",$parts[0]);    //[0] => /foo/bar/baz.html
         if($parts > 1){
             $ext = end($parts);         //[end] => html
-            if($allowedExtension !== null && in_array($ext,$allowedExtension)){
+            if($allowedExtension !== null || in_array($ext,$allowedExtension)){
                 return ".".$ext;
             }
         }
