@@ -525,4 +525,27 @@ class WebUtil
         }
         return false;
     }
+
+    /**
+     * Returns the extension of a given path.
+     * It's only a guess, because it might not even be a real extenstion, e.g. /foo/bar.baz.foldername
+     * This method simply looks for the last occurence of "." in the path and returns everything behind it (including the ".").
+     * @param $path
+     * @param string[]|null $allowedExtension [optional]. Default: null. If not null, the extension is only returned if it's in the array. Caution: not preceeding "." and case sensitive!
+     * @return string
+     * @todo TEST
+     */
+    public static function guessExtensionFromUrlPath($path, array $allowedExtension = null){
+        //e.g. $path = /foo/bar/baz.html?val=true#first
+        $parts = explode("#",$path);
+        $parts = explode("?",$parts[0]);    //[0] => /foo/bar/baz.html?val=true
+        $parts = explode(".",$parts[0]);    //[0] => /foo/bar/baz.html
+        if($parts > 1){
+            $ext = end($parts);         //[end] => html
+            if($allowedExtension !== null && in_array($ext,$allowedExtension)){
+                return ".".$ext;
+            }
+        }
+        return "";
+    }
 }

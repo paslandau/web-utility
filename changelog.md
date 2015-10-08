@@ -2,6 +2,8 @@
 
 #dev-master
 
+ - added WebUtil::guessExtensionFromUrlPath() *not tested yet*
+
 ##0.2.0
 
  - added methods to make URL query handling easier: `WebUtil::removeQuery()` and `WebUtil::getQuery()`
