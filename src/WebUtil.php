@@ -537,7 +537,10 @@ class WebUtil
      */
     public static function guessExtensionFromUrlPath($path, array $allowedExtension = null){
         //e.g. $path = /foo/bar/baz.html?val=true#first
-        $parts = explode("#",$path);
+
+        $parts  = explode("/",$path);
+        $lastFolder = end($parts);
+        $parts = explode("#",$lastFolder);
         $parts = explode("?",$parts[0]);    //[0] => /foo/bar/baz.html?val=true
         $parts = explode(".",$parts[0]);    //[0] => /foo/bar/baz.html
         if($parts > 1){

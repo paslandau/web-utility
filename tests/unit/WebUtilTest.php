@@ -767,7 +767,7 @@ class WebUtilTest extends PHPUnit_Framework_TestCase {
                 ],
             "myseosolution" =>
                 [
-                    "base" => "85.13.146.112",
+                    "base" => "85.13.133.212",
                     "host" => "myseosolution.de",
                     "strict" => false,
                     "expected" => false
