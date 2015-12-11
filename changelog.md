@@ -1,6 +1,6 @@
 #todo
 
-##0.7.6
+##0.8
 
  - updated dependencies (PHP ~7)
  - added WebUtil::guessExtensionFromUrlPath() *not tested yet*
