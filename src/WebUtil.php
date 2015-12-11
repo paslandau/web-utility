@@ -105,24 +105,25 @@ class WebUtil
      * @param bool $keepHash [optional]. Default: true.
      * @return string
      */
-    public static function removeQuery($url, $keepHash = null){
-        $idx = mb_strpos($url,"?");
-        if($idx === false){
+    public static function removeQuery($url, $keepHash = null)
+    {
+        $idx = mb_strpos($url, "?");
+        if ($idx === false) {
             return $url;
         }
 
         $hash = "";
-        if($keepHash === null){
+        if ($keepHash === null) {
             $keepHash = true;
         }
-        if($keepHash){
-            $hashIdx = mb_strrpos($url,"#");
-            if($hashIdx !== false){
-                $hash = mb_substr($url,$hashIdx);
+        if ($keepHash) {
+            $hashIdx = mb_strrpos($url, "#");
+            if ($hashIdx !== false) {
+                $hash = mb_substr($url, $hashIdx);
             }
         }
 
-        $newUrl = mb_substr($url,0,$idx);
+        $newUrl = mb_substr($url, 0, $idx);
         $newUrl .= $hash;
         return $newUrl;
     }
@@ -132,7 +133,8 @@ class WebUtil
      * @param string $url
      * @return string[]
      */
-    public static function getQuery($url){
+    public static function getQuery($url)
+    {
         $urlObj = Url::fromString($url);
         $query = $urlObj->getQuery();
         $params = $query->toArray();
@@ -159,8 +161,8 @@ class WebUtil
         $url->removeDotSegments();
         $res = $url->getPathSegments();
         $res = array_filter($res, function ($v) {
-                return !($v === null || $v === "");
-            });
+            return !($v === null || $v === "");
+        });
         return $res;
     }
 
@@ -184,8 +186,9 @@ class WebUtil
         return "";
     }
 
-    private static function getDomainParser(){
-        if(self::$domainParser === null){
+    private static function getDomainParser()
+    {
+        if (self::$domainParser === null) {
             $pslManager = new PublicSuffixListManager();
             $parser = new Parser($pslManager->getList());
             self::$domainParser = $parser;
@@ -213,7 +216,7 @@ class WebUtil
         $url = Url::fromString($url);
         $parser = self::getDomainParser();
         $subdomainString = $parser->getSubdomain($url->getHost());
-        $parts = explode(".",$subdomainString);
+        $parts = explode(".", $subdomainString);
         $res = array_filter($parts, function ($v) {
             return !($v === null || $v === "");
         });
@@ -228,7 +231,8 @@ class WebUtil
      * @param $url
      * @return string
      */
-    public static function getRegisterableDomain($url){
+    public static function getRegisterableDomain($url)
+    {
         $url = Url::fromString($url);
         $parser = self::getDomainParser();
         $domain = $parser->getRegisterableDomain($url->getHost());
@@ -243,7 +247,8 @@ class WebUtil
      * @param $url
      * @return string
      */
-    public static function getPublicSuffix($url){
+    public static function getPublicSuffix($url)
+    {
         $url = Url::fromString($url);
         $parser = self::getDomainParser();
         $domain = $parser->getPublicSuffix($url->getHost());
@@ -441,12 +446,12 @@ class WebUtil
     */
     public static function joinHttpHeaderWords(array $header_values)
     {
-        if(count($header_values) === 0){
+        if (count($header_values) === 0) {
             return "";
         }
         // evaluate if its a multidimensional array
         $first = reset($header_values);
-        if(!is_array($first)){
+        if (!is_array($first)) {
             $header_values = [$header_values];
         }
 
@@ -482,15 +487,15 @@ class WebUtil
      * @param bool $sortQueryParams [optional]. Default: false. If true, http://example.com/?b=foo&a=foo becomes http://example.com/?a=foo&b=foo instead of staying http://example.com/?b=foo&a=foo
      * @return string
      */
-    public static function normalizeUrl($url,$removeTrailingDelimiter = null, $sortQueryParams = null)
+    public static function normalizeUrl($url, $removeTrailingDelimiter = null, $sortQueryParams = null)
     {
-        if($removeTrailingDelimiter === null){
+        if ($removeTrailingDelimiter === null) {
             $removeTrailingDelimiter = false;
         }
-        if($sortQueryParams === null){
+        if ($sortQueryParams === null) {
             $sortQueryParams = false;
         }
-        $normalizer = new Normalizer($url,$removeTrailingDelimiter,$sortQueryParams);
+        $normalizer = new Normalizer($url, $removeTrailingDelimiter, $sortQueryParams);
         $url = $normalizer->normalize();
         return $url;
     }
@@ -499,7 +504,7 @@ class WebUtil
     /**
      *
      * @param string $ip . IP to check, e.g. "66.249.64.5"
-     * @param string $expectedHost. Expected host, e.g. "googlebot.com"
+     * @param string $expectedHost . Expected host, e.g. "googlebot.com"
      * @param bool $strict [optional]. Default: false.
      *      If true, $expectedHost must match exactly the host returned by gethostbyaddr(). Otherwise it might be a substring at the end.
      *      This is useful if gethostbyaddr() returns a subdomain, e.g. "66-249-64-5.googlebot.com" which should also be considered valid for "googlebot.com"
@@ -511,14 +516,14 @@ class WebUtil
         $found_host = gethostbyaddr($ip); // reverse ip
         $found_ip = gethostbyname($found_host); // reverse host
 
-        if($found_ip !== $ip){
+        if ($found_ip !== $ip) {
             return false;
         }
-        if(mb_strtolower($found_host) === mb_strtolower($expectedHost)) {
+        if (mb_strtolower($found_host) === mb_strtolower($expectedHost)) {
             return true;
         }
         if (!$strict) {
-            $found_host_substr = mb_substr($found_host, -1*mb_strlen($expectedHost));
+            $found_host_substr = mb_substr($found_host, -1 * mb_strlen($expectedHost));
             if (mb_strtolower($found_host_substr) === mb_strtolower($expectedHost)) {
                 return true;
             }
@@ -535,18 +540,24 @@ class WebUtil
      * @return string
      * @todo TEST
      */
-    public static function guessExtensionFromUrlPath($path, array $allowedExtension = null){
+    public static function guessExtensionFromUrlPath($path, array $allowedExtension = null)
+    {
         //e.g. $path = /foo/bar/baz.html?val=true#first
 
-        $parts  = explode("/",$path);
+        $parts = explode("/", $path);
         $lastFolder = end($parts);
-        $parts = explode("#",$lastFolder);
-        $parts = explode("?",$parts[0]);    //[0] => /foo/bar/baz.html?val=true
-        $parts = explode(".",$parts[0]);    //[0] => /foo/bar/baz.html
-        if($parts > 1){
+        $parts = explode("#", $lastFolder);
+        $parts = explode("?", $parts[0]);    //[0] => /foo/bar/baz.html?val=true
+        $parts = explode(".", $parts[0]);    //[0] => /foo/bar/baz.html
+        if ($parts > 1) {
             $ext = end($parts);         //[end] => html
-            if($allowedExtension === null || in_array($ext,$allowedExtension)){
-                return ".".$ext;
+            //sanizite
+            $pattern = "#[a-zA-Z0-9]+#";
+            if (!preg_match($pattern, $ext)) {
+                return "";
+            }
+            if ($allowedExtension === null || in_array($ext, $allowedExtension)) {
+                return "." . $ext;
             }
         }
         return "";
