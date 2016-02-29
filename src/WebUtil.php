@@ -27,7 +27,7 @@ class WebUtil
         $keys = array(
             "HTTPS", "SERVER_PROTOCOL", "SERVER_PORT", "SERVER_NAME", "REQUEST_URI"
         );
-        foreach ($keys as $key) {
+        foreach ($keys as $k => $key) {
             if (!array_key_exists($key, $_SERVER)) {
                 throw new \RuntimeException("Key '$key' does not exist");
             }
