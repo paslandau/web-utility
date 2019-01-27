@@ -1,16 +1,25 @@
-#web-utility
+# DEPRECATED ⛔ 
+
+This repository has been deprecated as of 2019-01-27. That code was written a long time ago and has been unmaintained for several years.
+Thus, repository will now be [archived](https://github.blog/2017-11-08-archiving-repositories/).
+If you are interested in taking over ownership, feel free to [contact me](https://www.pascallandau.com/about/).
+
+---
+
+
+# web-utility
 [![Build Status](https://travis-ci.org/paslandau/web-utility.svg?branch=master)](https://travis-ci.org/paslandau/web-utility)
 
 Library to extend PHP core functions by common web related functions
 
-##Description
+## Description
 [todo]
 
-##Requirements
+## Requirements
 
 - PHP >= 5.5
 
-##Installation
+## Installation
 
 The recommended way to install web-utility is through [Composer](http://getcomposer.org/).
 
